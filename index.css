@@ -1,0 +1,23 @@
+body{
+    background-color: lightblue;
+}
+
+label{
+    font-size: 18px;
+}
+
+.post_block{
+    background-color: #ffff;
+    margin: 10px;
+    padding: 10px;
+    text-align: center;
+    border-radius: 10px;
+}
+
+.contents_block{
+    background-color: #ffff;
+    margin: 10px;
+    padding: 10px;
+
+    border-radius: 10px;
+}
