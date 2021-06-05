@@ -9,7 +9,7 @@ $file_handle = null;
 $split_data = null;
 $message = array();
 $message_array = array();
-
+$success_message = null;
 
 //メッセージ投稿処理
 if (!empty($_POST['btn_submit'])) {
@@ -33,11 +33,12 @@ if ($file_handle = fopen(FILENAME, "r")) {
         array_unshift($message_array, $message);
     }
     fclose($file_handle);
+    $success_message = 'メッセージを書き込みました。';
 }
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -53,6 +54,11 @@ if ($file_handle = fopen(FILENAME, "r")) {
             <div class="col-md-8">
             <form action="" method="post">
             <label class="form-label" for="message">ひとりごと掲示板</label>
+            <?php if (!empty($success_message)): ?>
+            <div class="alert alert-success" role="alert">
+                <?php echo $success_message; ?>
+            </div>
+            <?php endif; ?>
             <textarea class="form-control" name="message" id="message" cols="30"></textarea>
             <div class="row">
                 <div class="col-md-2"></div>
