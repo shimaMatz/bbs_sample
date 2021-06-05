@@ -1,22 +1,39 @@
 <?php
-define( 'FILENAME', './message.txt');
+define('FILENAME', './message.txt');
 date_default_timezone_set('Asia/Tokyo');
 
-if( !empty($_POST['btn_submit']) ) {
-	if( $file_handle = fopen( FILENAME, "a") ) {
-	
-		$current_date = date("Y-m-d H:i:s");
+//変数の初期化
+$current_date = null;
+$data = null;
+$file_handle = null;
+$split_data = null;
+$message = array();
+$message_array = array();
 
-        $date ="'".$_POST['message']."','".$current_date."'\n";
 
-        fwrite($file_handle,$date);
-
-		fclose( $file_handle);
-	}	
-
+//メッセージ投稿処理
+if (!empty($_POST['btn_submit'])) {
+    if ($file_handle = fopen(FILENAME, "a")) {
+        $current_date = date("Y-m-d H:i:s");
+        $data ="'".$_POST['message']."','".$current_date."'\n";
+        fwrite($file_handle, $data);
+        fclose($file_handle);
+    }
 }
 
+//メッセージ読み込み処理
+if ($file_handle = fopen(FILENAME, "r")) {
+    while ($data = fgets($file_handle)) {
+        $split_data = preg_split('/\'/', $data);
 
+        $message = array(
+            'message' => $split_data[1],
+            'post_data' => $split_data[3]
+        );
+        array_unshift($message_array, $message);
+    }
+    fclose($file_handle);
+}
 ?>
 
 <!DOCTYPE html>
@@ -53,11 +70,14 @@ if( !empty($_POST['btn_submit']) ) {
         <div class="row">
         <div class="col-md-2"></div>
         <div class="col-md-8">
-            <div class="contents_block">
-                <label for="">ID：1 </label>
-                <label for="">2021年06月04日 15:54</label><br>
-                <label for="">テスト</label>
-            </div>
+            <?php if (!empty($message_array)):?>
+                <?php foreach ($message_array as $value):?>
+                    <div class="contents_block">
+                        <label for=""><?php echo date('Y年m月d日 H:i', strtotime($value['post_data'])); ?></label><br>
+                        <label for=""><?php echo $value['message']; ?></label>
+                    </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
         </div>
         <div class="col-md-2"></div>
         </div>
