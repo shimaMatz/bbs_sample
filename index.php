@@ -10,14 +10,21 @@ $split_data = null;
 $message = array();
 $message_array = array();
 $success_message = null;
+$error_message = array();
 
 //メッセージ投稿処理
 if (!empty($_POST['btn_submit'])) {
-    if ($file_handle = fopen(FILENAME, "a")) {
-        $current_date = date("Y-m-d H:i:s");
-        $data ="'".$_POST['message']."','".$current_date."'\n";
-        fwrite($file_handle, $data);
-        fclose($file_handle);
+    if (empty($_POST['message'])) {
+        $error_message[] = 'メッセージを入力してください';
+    }
+    if (empty($error_message)) {
+        if ($file_handle = fopen(FILENAME, "a")) {
+            $current_date = date("Y-m-d H:i:s");
+            $data ="'".$_POST['message']."','".$current_date."'\n";
+            fwrite($file_handle, $data);
+            fclose($file_handle);
+            $success_message = 'メッセージを書き込みました。';
+        }
     }
 }
 
@@ -33,7 +40,6 @@ if ($file_handle = fopen(FILENAME, "r")) {
         array_unshift($message_array, $message);
     }
     fclose($file_handle);
-    $success_message = 'メッセージを書き込みました。';
 }
 ?>
 
@@ -55,9 +61,17 @@ if ($file_handle = fopen(FILENAME, "r")) {
             <form action="" method="post">
             <label class="form-label" for="message">ひとりごと掲示板</label>
             <?php if (!empty($success_message)): ?>
-            <div class="alert alert-success" role="alert">
-                <?php echo $success_message; ?>
-            </div>
+                <div class="alert alert-success" role="alert">
+                    <?php echo $success_message; ?>
+                </div>
+            <?php endif; ?>
+
+            <?php if (!empty($error_message)): ?>
+                <?php foreach ($error_message as $value):?>
+                <div class="alert alert-danger" role="alert">
+                    <?php echo $value; ?>
+                </div> 
+                <?php endforeach;?>
             <?php endif; ?>
             <textarea class="form-control" name="message" id="message" cols="30"></textarea>
             <div class="row">
@@ -83,6 +97,10 @@ if ($file_handle = fopen(FILENAME, "r")) {
                         <label for=""><?php echo $value['message']; ?></label>
                     </div>
                 <?php endforeach; ?>
+            <?php else: ?>
+                    <div class="contents_block">
+                        <label for="">投稿がありません。</label>
+                    </div>
             <?php endif; ?>
         </div>
         <div class="col-md-2"></div>
