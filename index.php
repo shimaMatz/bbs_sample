@@ -16,11 +16,14 @@ $error_message = array();
 if (!empty($_POST['btn_submit'])) {
     if (empty($_POST['message'])) {
         $error_message[] = 'メッセージを入力してください';
+    } else {
+        $clean['message'] = htmlspecialchars($_POST['message'], ENT_QUOTES, 'UTF-8');
+        $clean['message'] = preg_replace('/\\r\\n|\\n|\\r/', '<br>', $clean['message']);
     }
     if (empty($error_message)) {
         if ($file_handle = fopen(FILENAME, "a")) {
             $current_date = date("Y-m-d H:i:s");
-            $data ="'".$_POST['message']."','".$current_date."'\n";
+            $data ="'".$clean['message']."','".$current_date."'\n";
             fwrite($file_handle, $data);
             fclose($file_handle);
             $success_message = 'メッセージを書き込みました。';
