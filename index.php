@@ -11,25 +11,68 @@ $message = array();
 $message_array = array();
 $success_message = null;
 $error_message = array();
+$clean = array();
+$pdo = null;
+$stmt = null;
+$res = null;
+$option = null;
+
+try {
+    $option = array(
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::MYSQL_ATTR_MULTI_STATEMENTS => false,
+    );
+    $pdo = new PDO('mysql:charset=UTF8;dbname=test;host=mysql', 'test', 'test', $option);
+} catch (PDOException $e) {
+    $error_message[] = $e->getMessage();
+}
 
 //メッセージ投稿処理
 if (!empty($_POST['btn_submit'])) {
-    if (empty($_POST['message'])) {
+    $message = preg_replace('/\A[\p{C}\p{Z}]++|[\p{C}\p{Z}]++\z/u', '', $_POST['message']);
+
+    if (empty($message)) {
         $error_message[] = 'メッセージを入力してください';
     } else {
         $clean['message'] = htmlspecialchars($_POST['message'], ENT_QUOTES, 'UTF-8');
         $clean['message'] = preg_replace('/\\r\\n|\\n|\\r/', '<br>', $clean['message']);
     }
     if (empty($error_message)) {
-        if ($file_handle = fopen(FILENAME, "a")) {
-            $current_date = date("Y-m-d H:i:s");
-            $data ="'".$clean['message']."','".$current_date."'\n";
-            fwrite($file_handle, $data);
-            fclose($file_handle);
-            $success_message = 'メッセージを書き込みました。';
+        // if ($file_handle = fopen(FILENAME, "a")) {
+        //     $current_date = date("Y-m-d H:i:s");
+        //     $data ="'".$clean['message']."','".$current_date."'\n";
+        //     fwrite($file_handle, $data);
+        //     fclose($file_handle);
+        //     $success_message = 'メッセージを書き込みました。';
+        // }
+        $current_date = date("Y-m-d H:i:s");
+
+        $pdo->beginTransaction();
+
+        try {
+            $stmt = $pdo->prepare("INSERT INTO message (message, post_date) VALUES (:message, :current_date)");
+            $stmt->bindParam(':message', $message, PDO::PARAM_STR);
+            $stmt->bindParam(':current_date', $current_date, PDO::PARAM_STR);
+    
+            $res = $stmt->execute();
+
+            $res = $pdo->commit();
+        } catch (Exception $e) {
+            $pdo->rollBack();
         }
+
+
+        if ($res) {
+            $success_message = 'メッセージを書き込みました。';
+        } else {
+            $error_message[] = '書き込みに失敗しました。';
+        }
+
+        $stmt->null;
     }
 }
+
+$pdo = null;
 
 //メッセージ読み込み処理
 if ($file_handle = fopen(FILENAME, "r")) {
