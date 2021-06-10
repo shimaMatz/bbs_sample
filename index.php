@@ -75,7 +75,7 @@ if (!empty($_POST['btn_submit'])) {
 if (empty($error_message)) {
 
     // メッセージのデータを取得する
-    $sql = "SELECT view_name,message,post_date FROM message ORDER BY post_date DESC";
+    $sql = "SELECT message,post_date FROM message ORDER BY post_date DESC";
     $message_array = $pdo->query($sql);
 }
 
@@ -150,7 +150,7 @@ $pdo = null;
             <?php if (!empty($message_array)):?>
                 <?php foreach ($message_array as $value):?>
                     <div class="contents_block">
-                        <label for=""><?php echo date('Y年m月d日 H:i', strtotime($value['post_data'])); ?></label><br>
+                        <time><?php echo date('Y年m月d日 H:i', strtotime($value['post_date'])); ?></time><br>
                         <label for=""><?php echo nl2br($value['message']); ?></label>
                     </div>
                 <?php endforeach; ?>
