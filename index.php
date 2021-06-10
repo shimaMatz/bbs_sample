@@ -72,21 +72,32 @@ if (!empty($_POST['btn_submit'])) {
     }
 }
 
+if (empty($error_message)) {
+
+    // メッセージのデータを取得する
+    $sql = "SELECT view_name,message,post_date FROM message ORDER BY post_date DESC";
+    $message_array = $pdo->query($sql);
+}
+
+
 $pdo = null;
 
 //メッセージ読み込み処理
-if ($file_handle = fopen(FILENAME, "r")) {
-    while ($data = fgets($file_handle)) {
-        $split_data = preg_split('/\'/', $data);
+// if ($file_handle = fopen(FILENAME, "r")) {
+//     while ($data = fgets($file_handle)) {
+//         $split_data = preg_split('/\'/', $data);
 
-        $message = array(
-            'message' => $split_data[1],
-            'post_data' => $split_data[3]
-        );
-        array_unshift($message_array, $message);
-    }
-    fclose($file_handle);
-}
+//         $message = array(
+//             'message' => $split_data[1],
+//             'post_data' => $split_data[3]
+//         );
+//         array_unshift($message_array, $message);
+//     }
+//     fclose($file_handle);
+// }
+
+
+
 ?>
 
 <!DOCTYPE html>
@@ -140,7 +151,7 @@ if ($file_handle = fopen(FILENAME, "r")) {
                 <?php foreach ($message_array as $value):?>
                     <div class="contents_block">
                         <label for=""><?php echo date('Y年m月d日 H:i', strtotime($value['post_data'])); ?></label><br>
-                        <label for=""><?php echo $value['message']; ?></label>
+                        <label for=""><?php echo nl2br($value['message']); ?></label>
                     </div>
                 <?php endforeach; ?>
             <?php else: ?>
