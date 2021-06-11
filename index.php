@@ -1,16 +1,19 @@
 <?php
-define('FILENAME', './message.txt');
+
+define('DB_HOST', 'mysql');
+define('DB_USER', 'test');
+define('DB_PASS', 'test');
+define('DB_NAME', 'test');
+
 date_default_timezone_set('Asia/Tokyo');
 
 //変数の初期化
 $current_date = null;
 $data = null;
-$split_data = null;
 $message = array();
 $message_array = array();
 $success_message = null;
 $error_message = array();
-$clean = array();
 $pdo = null;
 $stmt = null;
 $res = null;
@@ -21,7 +24,7 @@ try {
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::MYSQL_ATTR_MULTI_STATEMENTS => false,
     );
-    $pdo = new PDO('mysql:charset=UTF8;dbname=test;host=mysql', 'test', 'test', $option);
+    $pdo = new PDO('mysql:charset=UTF8;dbname='.DB_NAME.';host='.DB_HOST, DB_USER, DB_PASS, $option);
 } catch (PDOException $e) {
     $error_message[] = $e->getMessage();
 }
@@ -124,7 +127,7 @@ $pdo = null;
                 <?php foreach ($message_array as $value):?>
                     <div class="contents_block">
                         <time><?php echo date('Y年m月d日 H:i', strtotime($value['post_date'])); ?></time><br>
-                        <label for=""><?php echo nl2br($value['message']); ?></label>
+                        <label for=""><?php echo nl2br(htmlspecialchars($value['message'], ENT_QUOTES, 'UTF-8')); ?></label>
                     </div>
                 <?php endforeach; ?>
             <?php else: ?>
