@@ -5,7 +5,6 @@ date_default_timezone_set('Asia/Tokyo');
 //変数の初期化
 $current_date = null;
 $data = null;
-$file_handle = null;
 $split_data = null;
 $message = array();
 $message_array = array();
@@ -38,13 +37,6 @@ if (!empty($_POST['btn_submit'])) {
         $clean['message'] = preg_replace('/\\r\\n|\\n|\\r/', '<br>', $clean['message']);
     }
     if (empty($error_message)) {
-        // if ($file_handle = fopen(FILENAME, "a")) {
-        //     $current_date = date("Y-m-d H:i:s");
-        //     $data ="'".$clean['message']."','".$current_date."'\n";
-        //     fwrite($file_handle, $data);
-        //     fclose($file_handle);
-        //     $success_message = 'メッセージを書き込みました。';
-        // }
         $current_date = date("Y-m-d H:i:s");
 
         $pdo->beginTransaction();
@@ -61,42 +53,23 @@ if (!empty($_POST['btn_submit'])) {
             $pdo->rollBack();
         }
 
-
         if ($res) {
             $success_message = 'メッセージを書き込みました。';
         } else {
             $error_message[] = '書き込みに失敗しました。';
         }
-
         $stmt->null;
     }
 }
 
+// メッセージのデータを取得する
 if (empty($error_message)) {
-
-    // メッセージのデータを取得する
     $sql = "SELECT message,post_date FROM message ORDER BY post_date DESC";
     $message_array = $pdo->query($sql);
 }
 
 
 $pdo = null;
-
-//メッセージ読み込み処理
-// if ($file_handle = fopen(FILENAME, "r")) {
-//     while ($data = fgets($file_handle)) {
-//         $split_data = preg_split('/\'/', $data);
-
-//         $message = array(
-//             'message' => $split_data[1],
-//             'post_data' => $split_data[3]
-//         );
-//         array_unshift($message_array, $message);
-//     }
-//     fclose($file_handle);
-// }
-
-
 
 ?>
 
