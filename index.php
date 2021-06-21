@@ -1,9 +1,11 @@
 <?php
+require './vendor/autoload.php';
+Dotenv\Dotenv::createImmutable(__DIR__)->load();
 
-define('DB_HOST', 'mysql');
-define('DB_USER', 'test');
-define('DB_PASS', 'test');
-define('DB_NAME', 'test');
+define('DB_HOST', $_ENV['DB_HOST']);
+define('DB_USER', $_ENV['DB_USER']);
+define('DB_PASS', $_ENV['DB_PASS']);
+define('DB_NAME', $_ENV['DB_NAME']);
 
 date_default_timezone_set('Asia/Tokyo');
 
@@ -19,7 +21,7 @@ $stmt = null;
 $res = null;
 $option = null;
 
-session_start();
+// session_start();
 
 try {
     $option = array(
@@ -35,11 +37,9 @@ try {
 if (!empty($_POST['btn_submit'])) {
     $message = preg_replace('/\A[\p{C}\p{Z}]++|[\p{C}\p{Z}]++\z/u', '', $_POST['message']);
 
+    // メッセージの入力チェック
     if (empty($message)) {
-        $error_message[] = 'メッセージを入力してください';
-    } else {
-        $clean['message'] = htmlspecialchars($_POST['message'], ENT_QUOTES, 'UTF-8');
-        $clean['message'] = preg_replace('/\\r\\n|\\n|\\r/', '<br>', $clean['message']);
+        $error_message[] = 'ひと言メッセージを入力してください。';
     }
     if (empty($error_message)) {
         $current_date = date("Y-m-d H:i:s");
@@ -68,14 +68,12 @@ if (!empty($_POST['btn_submit'])) {
 }
 
 // メッセージのデータを取得する
-if (empty($error_message)) {
+if (!empty($pdo)) {
     $sql = "SELECT message,post_date FROM message ORDER BY post_date DESC";
     $message_array = $pdo->query($sql);
 }
 
-
 $pdo = null;
-
 ?>
 
 <!DOCTYPE html>
@@ -84,7 +82,7 @@ $pdo = null;
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/x-icon" href="black_neko.png">
+    <link rel="icon" type="image/x-icon" href="image\bara_logo.png">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
     <link rel="stylesheet" href="index.css">
     <title>ひとりごと掲示板</title>
@@ -144,6 +142,7 @@ $pdo = null;
     </div>
 
 
+<?php ?>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
