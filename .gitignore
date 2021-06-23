@@ -2,3 +2,6 @@ vendor
 .env
 composer.json
 composer.lock
+charge.php
+complete.php
+payments.php
