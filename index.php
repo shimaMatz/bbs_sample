@@ -2,6 +2,17 @@
 require './vendor/autoload.php';
 Dotenv\Dotenv::createImmutable(__DIR__)->load();
 
+
+include_once("Paging.php");
+//オブジェクトを生成
+$pageing = new Paging();
+//1ページ毎の表示数を設定
+$pageing -> count = 5;
+//全体の件数を設定しhtmlを生成
+$pageing -> setHtml(10);
+
+
+
 define('DB_HOST', $_ENV['DB_HOST']);
 define('DB_USER', $_ENV['DB_USER']);
 define('DB_PASS', $_ENV['DB_PASS']);
@@ -68,10 +79,36 @@ if (!empty($_POST['btn_submit'])) {
 }
 
 // メッセージのデータを取得する
-if (!empty($pdo)) {
-    $sql = "SELECT message,post_date FROM message ORDER BY post_date DESC";
-    $message_array = $pdo->query($sql);
+// if (!empty($pdo)) {
+//     $sql = "SELECT message,post_date FROM message ORDER BY post_date DESC";
+//     $message_array = $pdo->query($sql);
+// }
+
+$row_count =10;
+//テーブル全体の件数を取得
+$sql = "SELECT COUNT(*) FROM message";
+$message_array = $pdo -> query($sql);
+$count = $message_array -> fetch(PDO::FETCH_COLUMN);
+
+//現在のページを取得 存在しない場合は1とする
+$page = 1;
+if (isset($_GET['page']) && is_numeric($_GET['page'])) {
+    $page = (int)$_GET['page'];
 }
+if (!$page) {
+    $page = 1;
+}
+
+//$pageの数から件数分を表示するSQLクエリを生成 配列で取得
+$sql = "SELECT * FROM message";
+$sql .= " ORDER BY id DESC LIMIT ".(($page - 1) * $row_count).", ".$row_count;
+$message_array = $pdo -> query($sql);
+$aryPref = $message_array -> fetchAll(PDO::FETCH_ASSOC);
+
+//Pagingクラスを生成し、ページングのHTMLを生成
+$pageing = new Paging();
+$pageing -> count = $row_count;
+$pageing -> setHtml($count);
 
 $pdo = null;
 ?>
@@ -85,6 +122,7 @@ $pdo = null;
     <link rel="icon" type="image/x-icon" href="image\bara_logo.png">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
     <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="paging.css">
     <title>ひとりごと掲示板</title>
 </head>
 <body>
@@ -124,18 +162,20 @@ $pdo = null;
         <div class="row">
         <div class="col-md-2"></div>
         <div class="col-md-8">
-            <?php if (!empty($message_array)):?>
-                <?php foreach ($message_array as $value):?>
+            <?php if (!empty($aryPref)):?>
+                <?php foreach ($aryPref as $value):?>
                     <div class="contents_block">
                         <time><?php echo date('Y年m月d日 H:i', strtotime($value['post_date'])); ?></time><br>
                         <label for=""><?php echo nl2br(htmlspecialchars($value['message'], ENT_QUOTES, 'UTF-8')); ?></label>
                     </div>
+                    
                 <?php endforeach; ?>
             <?php else: ?>
                     <div class="contents_block">
                         <label for="">投稿がありません。</label>
                     </div>
             <?php endif; ?>
+            <?php echo $pageing -> html; ?>
         </div>
         <div class="col-md-2"></div>
         </div>

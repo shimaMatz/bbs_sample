@@ -1,4 +1,27 @@
 <?php
+require './vendor/autoload.php';
+Dotenv\Dotenv::createImmutable(__DIR__)->load();
+
+define('DB_HOST', $_ENV['DB_HOST']);
+define('DB_USER', $_ENV['DB_USER']);
+define('DB_PASS', $_ENV['DB_PASS']);
+define('DB_NAME', $_ENV['DB_NAME']);
+
+date_default_timezone_set('Asia/Tokyo');
+
+try {
+    $option = array(
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::MYSQL_ATTR_MULTI_STATEMENTS => false,
+    );
+    $pdo = new PDO('mysql:charset=UTF8;dbname='.DB_NAME.';host='.DB_HOST, DB_USER, DB_PASS, $option);
+} catch (PDOException $e) {
+    $error_message[] = $e->getMessage();
+}
+
+if (!empty($_POST['btn_submit'])) {
+    $success_message = 'ログイン完了しました。';
+}
 
 ?>
 
@@ -14,7 +37,8 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
     <link rel="stylesheet" href="index.css">
     <link rel="stylesheet" href="signin.css">
-    <title>管理者ログイン</title>
+    <link rel="stylesheet" href="paging.css">
+    <title>ひと言掲示板　管理者ログイン</title>
 </head>
 <body>
 
@@ -26,12 +50,7 @@
     <input type="email" id="inputEmail" name ="email" class="form-control" placeholder="Email address" required autofocus>
     <label for="inputPassword" class="sr-only">パスワード</label>
     <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Password" required>
-    <div class="checkbox mb-3">
-        <label>
-        <input type="checkbox" value="remember-me"> Remember me
-        </label>
-    </div>
-    <button class="btn btn-lg btn-primary btn-block" type="submit">ログイン</button>
+    <button name="btn_submit"class="btn btn-lg btn-primary btn-block" type="submit" value="login">ログイン</button>
     </form>
 </div>
 
