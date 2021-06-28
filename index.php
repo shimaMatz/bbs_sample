@@ -3,7 +3,7 @@ require './vendor/autoload.php';
 Dotenv\Dotenv::createImmutable(__DIR__)->load();
 
 
-include_once("Paging.php");
+include_once("paging.php");
 //オブジェクトを生成
 $pageing = new Paging();
 //1ページ毎の表示数を設定
