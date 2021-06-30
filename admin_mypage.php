@@ -38,6 +38,11 @@ if (!empty($_POST['btn_logout'])) {
     unset($_SESSION['admin_login']);
 }
 
+if (empty($_SESSION['admin_login'])) {
+    header('Location: ./');
+    exit;
+}
+
 try {
     $option = array(
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
@@ -80,7 +85,7 @@ if (!empty($_POST['btn_submit'])) {
         }
         $stmt->null;
 
-        header('Location: ./');
+        header('Location: ./admin_mypage.php');
         exit;
     }
 }
@@ -131,7 +136,7 @@ $pdo = null;
         <div class="row post_block">
             <div class="col-md-2"></div>
             <div class="col-md-8">
-            <form action="" method="post">
+            <form action="admin_mypage.php" method="post">
             <label class="form-label" for="message">ひとりごと掲示板</label>
             <?php if (empty($_POST['btn_submit']) && !empty($_SESSION['success_message'])): ?>
                 <div class="alert alert-success" role="alert">
@@ -164,6 +169,19 @@ $pdo = null;
         <div class="row">
         <div class="col-md-2"></div>
         <div class="col-md-8">
+            <form method="POST" action="./download.php">
+            <select name="limit" class="form-control" id="exampleFormControlSelect1">
+                <option value="">全て</option>
+                <option value="10">10件</option>
+                <option value="30">30件</option>
+            </select>
+                <button type="submit" name="btn_download" class="btn btn-success post_btn" value="CSVダウンロード">CSVダウンロード</button>
+            </form>
+            <?php if ($_SESSION['admin_login']):?>
+                <form method="post" action="">
+                    <button type="submit" name="btn_logout" class="btn btn-danger post_btn" value="ログアウト">ログアウト</button>
+                </form>
+            <?php endif;?>
             <?php if (!empty($aryPref)):?>
                 <?php foreach ($aryPref as $value):?>
                     <div class="contents_block">
@@ -185,11 +203,7 @@ $pdo = null;
         <div class="row">
             <div class="col-md-2"></div>
             <div class="col-md-8">
-            <?php if ($_SESSION['admin_login']):?>
-                <form method="post" action="">
-                    <input type="submit" name="btn_logout" value="ログアウト">
-                </form>
-            <?php endif;?>
+
             </div>
             <div class="col-md-2"></div>
         </div>
