@@ -1,4 +1,5 @@
 vendor
+images
 .env
 composer.json
 composer.lock
