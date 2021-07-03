@@ -24,7 +24,7 @@
     mb_internal_encoding("UTF-8");
  
     /* メール作成 */
-    $mail_to = "shimamatz@gmail.com";
+    $mail_to = "shimamatz@yahoo.co.jp";
     $mail_subject = "【お問い合わせ】".$m_name."様";
     $mail_body = $mail_content;
     $mail_header = "From:".$m_address;
