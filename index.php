@@ -132,7 +132,7 @@ $pdo = null;
             <div class="col-md-2"></div>
             <div class="col-md-8">
             <form action="" method="post">
-            <label class="form-label" for="message">ひとりごと掲示板</label>
+            <label class="form-label" for="message">ひと言掲示板</label>
             <?php if (empty($_POST['btn_submit']) && !empty($_SESSION['success_message'])): ?>
                 <div class="alert alert-success" role="alert">
                     <?php echo htmlspecialchars($_SESSION['success_message'], ENT_QUOTES, 'UTF-8'); ?>
