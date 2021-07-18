@@ -15,12 +15,9 @@
             </tr>
         </thead>
         <tbody>
-        {foreach from=$people item=p key=k}
             <tr>
-                <td>{$k}</td>
-                <td>{$p}</td>
+                <td>{$title1}</td>
             </tr>
-        {/foreach}
         </tbody>
     </table>
 </body>
