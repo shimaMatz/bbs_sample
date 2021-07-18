@@ -38,7 +38,7 @@ if (!empty($_POST['btn_logout'])) {
     unset($_SESSION['admin_login']);
 }
 
-if (empty($_SESSION['admin_login'])) {
+if (empty($_SESSION['admin_login']) || $_SESSION['admin_login'] !== true) {
     header('Location: ./');
     exit;
 }
@@ -58,7 +58,7 @@ if (!empty($_POST['btn_submit'])) {
     $message = preg_replace('/\A[\p{C}\p{Z}]++|[\p{C}\p{Z}]++\z/u', '', $_POST['message']);
 
     // メッセージの入力チェック
-    if (empty($message)) {
+    if (!strlen($message)) {
         $error_message[] = 'ひと言メッセージを入力してください。';
     }
     if (empty($error_message)) {
