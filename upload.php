@@ -9,6 +9,11 @@ define('DB_NAME', $_ENV['DB_NAME']);
 
 date_default_timezone_set('Asia/Tokyo');
 
+if (empty($_SESSION['admin_login']) || $_SESSION['admin_login'] !== true) {
+    header('Location: ./');
+    exit;
+}
+
 try {
     $option = array(
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
