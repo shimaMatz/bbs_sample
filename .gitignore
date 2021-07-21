@@ -1,6 +1,9 @@
 vendor
 images
 .env
+tmp
+templates_c
+cache
 composer.json
 composer.lock
 charge.php
